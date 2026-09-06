@@ -1,5 +1,7 @@
 # Trabajo Práctico Integrador I
 
+**Alumno:** Martino Lotto
+
 Sistema backend para la gestión de un blog personal desarrollado con Node.js, Express, Sequelize y MySQL.
 
 El proyecto integrará:
