@@ -5,7 +5,7 @@
 import { UserModel } from "../models/user.model.js";
 
 // controlador para obtener todos los usuarios 
-export const getUsers = async (req, res) => {
+export const getAllUsers = async (req, res) => {
     try {
         const users = await UserModel.findAll()
         return res.status(200).json(users)
@@ -141,6 +141,7 @@ export const updateUser = async (req, res) => {
     
 }
 
+//borrar usuario
 export const deleteUser = async (req, res) => {
     try {
         //obtener el id de la peticion
@@ -155,7 +156,7 @@ export const deleteUser = async (req, res) => {
                 message: "Usuario no Encontrado",
             });
         }
-
+        //borramos todo el registro que ya identificamos
         await user.destroy()
         
         return res.status(200).json({

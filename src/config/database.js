@@ -1,5 +1,4 @@
 //crear y exportar una configuración de Sequelize para que el resto del proyecto pueda utilizarla
-
 import "dotenv/config"; //leer .env
 import { Sequelize } from "sequelize"
 
@@ -21,7 +20,7 @@ export const startDB = async ()=>{
         console.log("conexion a MySQL establecida correctamente");
 
         await sequelize.sync()
-        // await sequelize.sync({ force: true })
+        //await sequelize.sync({ force: true })
         console.log("modelos sincronizdos correctamente");
         
     }catch (error){
