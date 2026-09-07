@@ -2,13 +2,24 @@
 
 //importamos el modelo para que sequelize lo registre
 //y para consultar usuarios desde el controlador 
+import { ProfileModel } from "../models/profile.model.js";
 import { UserModel } from "../models/user.model.js";
 
 // controlador para obtener todos los usuarios 
 export const getAllUsers = async (req, res) => {
     try {
-        const users = await UserModel.findAll()
-        return res.status(200).json(users)
+        const users = await UserModel.findAll({
+            attributes: {
+                exclude:["password"]
+            },
+            include: {
+                model: ProfileModel,
+                as: "profile"
+            }
+        })
+        return res.status(200).json(
+            users
+        )
 
     } catch (error) {
 
@@ -62,8 +73,14 @@ export const getUserById = async (req, res) => {
         const userId = req.params.id
 
         //buscamos el user por el id que recibimos
-        const user = await UserModel.findByPk(userId)
-        
+        const user = await UserModel.findByPk(userId, {
+            //buscamos el profile relacionado con el usuario
+            include: {
+                model: ProfileModel,
+                //usamos la asociacion que llamamos con el alias profile
+                as: "profile"
+            }
+        })
         //si no hay un usuario con ese id
         if (!user) {
             return res.status(404).json({
@@ -74,10 +91,13 @@ export const getUserById = async (req, res) => {
         return res.status(200).json({
             message: "Usuario encontrado",
             user: {
+                //respondemos los datos del user
                 id: user.id,
                 username: user.username,
                 email: user.email,
-                role: user.role
+                role: user.role,
+                //respondemos los datos del perfil
+                profile:  user.profile
             }
         })
 
