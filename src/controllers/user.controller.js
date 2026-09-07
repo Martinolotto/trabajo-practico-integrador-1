@@ -89,3 +89,54 @@ export const getUserById = async (req, res) => {
         })
     }
 }
+
+//actualizar un usuario
+export const updateUser = async (req, res) => {
+    try {
+        //obtener el id de la peticion
+        const userId = req.params.id;
+
+        //obtener los nuevos datos del body
+        //desestructuramos para crear las variables de esas propiedades 
+        const { username, email } = req.body
+
+        //guardamos las propiedades con la nueva informacion por actualizar para pasarsela a sequelize
+        const userData = {
+            username,
+            email
+        }
+
+        //buscamos el usuario por id
+        const user = await UserModel.findByPk(userId)
+
+         //si no hay un usuario con ese id
+        if (!user) {
+            return res.status(404).json({
+                message: "Usuario no Encontrado"
+            })
+        }
+
+        //actualizamos el registro que encontramos del usaurio existente, con los datos del body que guardamos
+        await user.update(userData)
+        //console.log(user.username);
+
+        return res.status(200).json({
+            message: "Usuario actualizado correctamente",
+            //datos actualizados
+            user: {
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                role: user.role
+            }
+        })
+
+    } catch (error) {
+        console.log(error);
+
+        return res.status(500).json({
+            message: "Error interno del Servidor",
+        });
+    }
+    
+}

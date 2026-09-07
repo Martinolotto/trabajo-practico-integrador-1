@@ -13,6 +13,7 @@ app.use(express.json());
 //routers
 import { userRouter } from "./src/routes/user.routes.js";
 
+
 //ruta de prueba del servidor
 app.get("/", (req, res) => {
   return res.status(200).json({
