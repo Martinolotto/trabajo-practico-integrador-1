@@ -20,3 +20,37 @@ export const getUsers = async (req, res) => {
     })
   }
 }
+
+//crear usuarios 
+export const createUser = async (req, res) => {
+    try {
+        //obtener los datos que vienen del body
+        //desestructuracion 
+        const { username, email, password } = req.body;
+
+        //crear un usuario en MySQL
+        const user = await UserModel.create({
+            username,
+            email,
+            password
+        })
+
+        //reponder con los datos creados del usuario
+        return res.status(201).json({
+            message: "Usuario creeado correctamente",
+            user: {
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                role: user.role
+            }
+        })
+
+    } catch (error) {
+        console.log(error);
+
+        return res.status(500).json({
+            message: "Error interno del servidor"
+        })
+    }
+}

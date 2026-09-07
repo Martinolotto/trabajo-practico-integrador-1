@@ -7,6 +7,12 @@ import { startDB } from "./src/config/database.js";
 const app = express();
 const puerto = process.env.PORT || 3005;
 
+// permite leer cuerpos JSON enviados por el cliente
+app.use(express.json());
+
+//routers
+import { userRouter } from "./src/routes/user.routes.js";
+
 //ruta de prueba del servidor
 app.get("/", (req, res) => {
   return res.status(200).json({
@@ -17,8 +23,6 @@ app.get("/", (req, res) => {
 //configuracion de las rutas de user bajo prefijo /api
 app.use("/api", userRouter);
 
-//routers
-import { userRouter } from "./src/routes/user.routes.js";
 
 //incia la base de datos y si funciona incia el server
 const startServer = async () => {

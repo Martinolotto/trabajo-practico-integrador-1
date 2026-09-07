@@ -1,6 +1,7 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/database.js";
 
+//modelo de nuestra tabla, define para que sequilize la registre
 export const UserModel = sequelize.define(
     "User",
     {

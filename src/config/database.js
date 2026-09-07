@@ -15,9 +15,8 @@ export const sequelize = new Sequelize(
 })
 
 //prueba de conexion a la base de datos 
-
 export const startDB = async ()=>{
-    try{
+    try {
         await sequelize.authenticate();
         console.log("conexion a MySQL establecida correctamente");
 
