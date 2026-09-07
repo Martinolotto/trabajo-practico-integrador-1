@@ -1,12 +1,11 @@
+//¿Qué función debe ejecutarse para esta combinación de método HTTP + URL?
 //importar router
 import { Router } from "express";
+
+import { getUsers } from "../controllers/user.controller.js";
 
 //enrutador agrupa las rutas de user
 export const userRouter = Router()
 
-//ruta temporal de prueba
-userRouter.get("/users", (req,res)=>{
-    return res.status(200).json({
-        message: "Listado de usuarios"
-    })
-})
+//rutas. 
+userRouter.get("/users", getUsers)
