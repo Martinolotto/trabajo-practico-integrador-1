@@ -54,3 +54,38 @@ export const createUser = async (req, res) => {
         })
     }
 }
+
+//obtener usario por id 
+export const getUserById = async (req, res) => {
+    try {
+        //obtener el parametro por la request
+        const userId = req.params.id
+
+        //buscamos el user por el id que recibimos
+        const user = await UserModel.findByPk(userId)
+        
+        //si no hay un usuario con ese id
+        if (!user) {
+            return res.status(404).json({
+                message: "Usuario no Encontrado"
+            })
+        }
+
+        return res.status(200).json({
+            message: "Usuario encontrado",
+            user: {
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                role: user.role
+            }
+        })
+
+    } catch (error) {
+        console.log(error);
+
+        return res.status(500).json({
+            message: "Error interno del Servidor"
+        })
+    }
+}

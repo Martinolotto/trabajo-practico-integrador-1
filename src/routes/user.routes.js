@@ -2,7 +2,7 @@
 //importar router
 import { Router } from "express";
 
-import { getUsers, createUser } from "../controllers/user.controller.js";
+import { getUsers, createUser, getUserById } from "../controllers/user.controller.js";
 
 //enrutador agrupa las rutas de user
 export const userRouter = Router()
@@ -10,3 +10,4 @@ export const userRouter = Router()
 //rutas
 userRouter.get("/users", getUsers)
 userRouter.post("/users", createUser)
+userRouter.get("/users/:id", getUserById)
