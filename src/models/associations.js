@@ -2,6 +2,8 @@
 import { UserModel } from "./user.model.js";
 import { ProfileModel } from "./profile.model.js";
 import { ArticleModel } from "./article.model.js";
+import { TagModel } from "./tag.model.js";
+import { ArticleTagModel } from "./article.tag.model.js";
 
 //1:1
 //user tiene un profile
@@ -33,3 +35,23 @@ ArticleModel.belongsTo(UserModel, {
   foreignKey: "user_id",
   as: "author",
 });
+
+
+//N:M
+ArticleModel.belongsToMany(TagModel, {
+  //tabla puente
+  through: ArticleTagModel,
+  foreignKey: "article_id",
+  //fk de la tabla puente
+  otherKey: "tag_id",
+  as: "tags"
+
+})
+
+TagModel.belongsToMany(ArticleModel, {
+  through: ArticleTagModel,
+  foreignKey: "tag_id",
+  otherKey: "article_id",
+  as: "articles"
+})
+
