@@ -9,7 +9,7 @@ import "./src/models/associations.js";
 //routers
 import { userRouter } from "./src/routes/user.routes.js";
 import { profileRouter } from './src/routes/profile.routes.js';
-
+import { articleRouter } from './src/routes/article.routes.js';
 
 //aplicacion y puerto
 const app = express();
@@ -29,7 +29,7 @@ app.get("/", (req, res) => {
 //configuracion de las rutas de user bajo prefijo /api
 app.use("/api", userRouter);
 app.use("/api", profileRouter);
-
+app.use("/api", articleRouter)
 
 //incia la base de datos y si funciona incia el server
 const startServer = async () => {

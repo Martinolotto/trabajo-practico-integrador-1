@@ -4,6 +4,7 @@
 //y para consultar usuarios desde el controlador 
 import { ProfileModel } from "../models/profile.model.js";
 import { UserModel } from "../models/user.model.js";
+import { ArticleModel } from "../models/article.model.js";
 
 // controlador para obtener todos los usuarios 
 export const getAllUsers = async (req, res) => {
@@ -75,11 +76,19 @@ export const getUserById = async (req, res) => {
         //buscamos el user por el id que recibimos
         const user = await UserModel.findByPk(userId, {
             //buscamos el profile relacionado con el usuario
-            include: {
+            include: [
+                {
                 model: ProfileModel,
                 //usamos la asociacion que llamamos con el alias profile
                 as: "profile"
-            }
+                },
+                //segunda asociacion
+                {
+                    model: ArticleModel,
+                    as: "articles"
+
+                }
+            ]
         })
         //si no hay un usuario con ese id
         if (!user) {
@@ -97,7 +106,9 @@ export const getUserById = async (req, res) => {
                 email: user.email,
                 role: user.role,
                 //respondemos los datos del perfil
-                profile:  user.profile
+                profile: user.profile,
+                //articulos asociados al usuario
+                articles: user.articles
             }
         })
 
