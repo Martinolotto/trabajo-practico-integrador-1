@@ -49,7 +49,7 @@ export const createUser = async (req, res) => {
 
         //reponder con los datos creados del usuario
         return res.status(201).json({
-            message: "Usuario creeado correctamente",
+            message: "Usuario creado correctamente",
             user: {
                 id: user.id,
                 username: user.username,

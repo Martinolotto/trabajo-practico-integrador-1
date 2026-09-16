@@ -11,6 +11,7 @@ import { userRouter } from "./src/routes/user.routes.js";
 import { profileRouter } from './src/routes/profile.routes.js';
 import { articleRouter } from './src/routes/article.routes.js';
 import { tagRouter } from "./src/routes/tag.routes.js";
+import { articleTagRouter } from "./src/routes/article.tag.routes.js";
 
 //aplicacion y puerto
 const app = express();
@@ -32,6 +33,7 @@ app.use("/api", userRouter);
 app.use("/api", profileRouter);
 app.use("/api", articleRouter)
 app.use("/api", tagRouter)
+app.use("/api", articleTagRouter )
 
 //incia la base de datos y si funciona incia el server
 const startServer = async () => {

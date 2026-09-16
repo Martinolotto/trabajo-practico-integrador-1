@@ -26,11 +26,12 @@ ProfileModel.belongsTo(UserModel, {
 });
 
 //1:N
+// un usuario se ouede relacionar con muchos articulos
 UserModel.hasMany(ArticleModel, {
   foreignKey: "user_id",
   as: "articles",
 });
-
+//a cada articulo le corresponde un usuario
 ArticleModel.belongsTo(UserModel, {
   foreignKey: "user_id",
   as: "author",
@@ -38,12 +39,17 @@ ArticleModel.belongsTo(UserModel, {
 
 
 //N:M
+//Un Article se puede relacionar con muchos Tags
 ArticleModel.belongsToMany(TagModel, {
   //tabla puente
+  // Esa relación no está directamente en Article, sino que pasa a través de ArticleTagModel
   through: ArticleTagModel,
+  //Cuando estoy parado en Article, la columna de la tabla puente que me representa es article_id
   foreignKey: "article_id",
+  // La columna que representa al otro lado es tag_id
   //fk de la tabla puente
   otherKey: "tag_id",
+  //Y desde Article quiero llamar a los relacionados tags
   as: "tags"
 
 })
@@ -54,4 +60,3 @@ TagModel.belongsToMany(ArticleModel, {
   otherKey: "article_id",
   as: "articles"
 })
-

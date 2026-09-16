@@ -1,8 +1,7 @@
 //modelo donde hacemos las consultas
 import { TagModel } from "../models/tag.model.js";
 
-//crear articulo
-
+//crear tag Y desde Article quiero llamar a los relacionados tags
 export const createTag = async (req, res) => {
   try {
     //obtener los datos del body
