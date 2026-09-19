@@ -4,7 +4,7 @@ import { Router } from "express";
 import {
 //   getAllUsers,
   createArticle,
-//   getUserById,
+  getArticleById,
 //   updateUser,
 //   deleteUser,
 } from "../controllers/article.controller.js";
@@ -15,6 +15,6 @@ export const articleRouter = Router();
 //rutas
 // userRouter.get("/users", getAllUsers);
 articleRouter.post("/articles", createArticle);
-// userRouter.get("/users/:id", getUserById);
+articleRouter.get("/articles/:id", getArticleById);
 // userRouter.put("/users/:id", updateUser);
 // userRouter.delete("/users/:id", deleteUser);

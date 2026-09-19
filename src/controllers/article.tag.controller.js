@@ -32,3 +32,35 @@ export const createArticleTag = async (req, res) => {
         })
     }
 }
+
+//borrar relacion entre articulo y tag
+export const deleteArticleTag = async (req, res) => {
+    try {
+        //obtener el id de la peticion
+        const articleTagId = req.params.articleTagId;
+
+        //buscamos la relacion por id
+        const articleTag = await ArticleTagModel.findByPk(articleTagId);
+
+        //si no hay una relacion con ese id
+        if (!articleTag) {
+            return res.status(404).json({
+                message: "Relación no encontrada",
+            });
+        }
+
+        //borramos todo el registro que ya identificamos
+        await articleTag.destroy()
+        
+        return res.status(200).json({
+            message: "etiqueta retirada del artículo correctamente"
+        })
+        
+    } catch (error) {
+        console.log(error);
+
+        return res.status(500).json({
+            message: "Error interno del Servidor",
+        });
+    }
+}

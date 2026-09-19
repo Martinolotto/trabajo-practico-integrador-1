@@ -2,11 +2,11 @@
 import { Router } from "express";
 
 import {
-//   getAllUsers,
-    createArticleTag,
-//   getUserById,
-//   updateUser,
-//   deleteUser,
+  //   getAllUsers,
+  createArticleTag,
+  //   getUserById,
+  //   updateUser,
+  deleteArticleTag,
 } from "../controllers/article.tag.controller.js";
 
 //enrutador agrupa las rutas de user
@@ -17,4 +17,4 @@ export const articleTagRouter = Router();
 articleTagRouter.post("/articles-tags", createArticleTag);
 // userRouter.get("/users/:id", getUserById);
 // userRouter.put("/users/:id", updateUser);
-// userRouter.delete("/users/:id", deleteUser);
+articleTagRouter.delete("/articles-tags/:articleTagId", deleteArticleTag);

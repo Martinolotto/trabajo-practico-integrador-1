@@ -3,8 +3,8 @@ import { Router } from "express";
 
 import {
     //   getAllUsers,
-    createTag
-  //   getUserById,
+    createTag,
+    getTagById,
   //   updateUser,
   //   deleteUser,
 } from "../controllers/tag.controller.js";
@@ -15,6 +15,6 @@ export const tagRouter = Router();
 //rutas
 // userRouter.get("/users", getAllUsers);
 tagRouter.post("/tag", createTag);
-// userRouter.get("/users/:id", getUserById);
+tagRouter.get("/tag/:id", getTagById);
 // userRouter.put("/users/:id", updateUser);
 // userRouter.delete("/users/:id", deleteUser);
