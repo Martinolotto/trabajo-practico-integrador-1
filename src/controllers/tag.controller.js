@@ -3,6 +3,9 @@ import { ArticleModel } from "../models/article.model.js";
 import { TagModel } from "../models/tag.model.js";
 //importamos matchedData para trabajar solamente con los datos enviados y validados
 import { matchedData } from "express-validator";
+//eliminacion cascada
+import { ArticleTagModel } from "../models/article.tag.model.js";
+import { sequelize } from "../config/database.js";
 
 //crear tag Y desde Article quiero llamar a los relacionados tags
 export const createTag = async (req, res) => {
@@ -142,7 +145,17 @@ export const deleteTag = async (req, res) => {
     }
 
     //eliminar el tag encontrado
-    await tag.destroy();
+    //eliminar la etiqueta y sus asociaciones
+    await sequelize.transaction(async (transaction) => {
+      //borrar relaciones de la tabla intermedia
+      await ArticleTagModel.destroy({
+        where: { tag_id: tag.id },
+        transaction,
+      });
+
+      //borrar físicamente el tag
+      await tag.destroy({ transaction });
+    });
 
     return res.status(200).json({
       message: "Tag eliminado correctamente",

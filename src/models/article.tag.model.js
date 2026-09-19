@@ -20,8 +20,11 @@ export const ArticleTagModel = sequelize.define(
             references: {
                 model: ArticleModel,
                 key: "id"
-
-            }
+            },
+            //si se borra físicamente el artículo,
+            //también se borran sus relaciones con etiquetas
+            onDelete: "CASCADE",
+            onUpdate: "CASCADE"
         },
 
         //Foreign Key
@@ -31,7 +34,11 @@ export const ArticleTagModel = sequelize.define(
             references: {
                 model: TagModel,
                 key: "id"
-            }
+            },
+             //si se borra físicamente la etiqueta,
+            //también se borran sus relaciones con artículos
+            onDelete: "CASCADE",
+            onUpdate: "CASCADE"
         },
         
     },

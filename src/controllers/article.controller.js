@@ -4,6 +4,9 @@ import { TagModel } from "../models/tag.model.js";
 import { UserModel } from "../models/user.model.js";
 //importamos matchedData para trabajar solamente con los datos enviados y validados
 import { matchedData } from "express-validator";
+//imports para eliminacion cascada
+import { ArticleTagModel } from "../models/article.tag.model.js";
+import { sequelize } from "../config/database.js";
 
 //crear articulo
 
@@ -92,6 +95,51 @@ export const getArticleById = async (req, res) => {
 
     return res.status(500).json({
       message: "Error interno del servidor",
+    });
+  }
+};
+
+//eliminar artículo de forma lógica
+//también eliminamos físicamente sus relaciones con tags
+export const deleteArticle = async (req, res) => {
+  try {
+    //obtener el id validado desde los parámetros
+    const { id } = matchedData(req, {
+      locations: ["params"]
+    });
+
+    //buscar el artículo que queremos eliminar
+    const article = await ArticleModel.findByPk(id);
+
+    if (!article) {
+      return res.status(404).json({
+        message: "Artículo no encontrado"
+      });
+    }
+
+    //transacción: ambas operaciones deben completarse
+    //si una falla, se revierten los cambios de la otra
+    await sequelize.transaction(async (transaction) => {
+
+      //eliminamos las filas de la tabla intermedia
+      await ArticleTagModel.destroy({
+        where: { article_id: article.id },
+        transaction
+      });
+
+      //paranoid hace que esta eliminación sea lógica
+      await article.destroy({ transaction });
+    });
+
+    return res.status(200).json({
+      message: "Artículo eliminado correctamente"
+    });
+
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      message: "Error interno del servidor"
     });
   }
 };

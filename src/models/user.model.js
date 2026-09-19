@@ -37,6 +37,17 @@ export const UserModel = sequelize.define(
     {
         timestamps: true,
         createdAt: "created_at",
-        updatedAt: "updated_at"
+        updatedAt: "updated_at",
+        //habilita eliminacion logica 
+        paranoid: true,
+        //columna registra cuando se elimino el user
+        deletedAt: "deleted_at"
+        // destroy() registra la fecha de eliminación en deleted_at.
+        // Las consultas normales de Sequelize ignoran esos registros.
     }
 );
+// Concepto	Qué hace
+// paranoid: true	Mantiene el registro y marca deleted_at
+// ON DELETE CASCADE	MySQL elimina físicamente los registros dependientes cuando se borra físicamente el registro padre
+// ON UPDATE CASCADE	Actualiza claves foráneas dependientes si cambia el valor de la clave referenciada
+// sequelize.transaction()	Hace que varias operaciones se confirmen juntas o se reviertan juntas
