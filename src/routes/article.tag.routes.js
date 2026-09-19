@@ -1,40 +1,16 @@
-//importar router
+/*
+ GUIA EXAMEN - TABLA PUENTE ArticleTag
+ POST agrega tag a artículo. DELETE elimina una asociación específica.
+ CONSIGNA: solo el autor del ARTÍCULO, incluso si otro usuario es admin.
+ 1) auth: identificar usuario; 2) validar IDs; 3) owner: comparar con autor
+ 4) controller: realizar la operación en MySQL.
+*/
 import { Router } from "express";
-
-import {
-  //   getAllUsers,
-  createArticleTag,
-  //   getUserById,
-  //   updateUser,
-  deleteArticleTag,
-} from "../controllers/article.tag.controller.js";
-
-import {
-  createArticleTagValidations,
-  deleteArticleTagValidations,
-} from "../middlewares/article.tag.validation.js";
-
+import { createArticleTag, deleteArticleTag } from "../controllers/article.tag.controller.js";
+import { createArticleTagValidations, deleteArticleTagValidations } from "../middlewares/article.tag.validation.js";
 import { validate } from "../middlewares/validate.js";
-
-//enrutador agrupa las rutas de user
+import { authMiddleware } from "../middlewares/auth.middleware.js";
+import { ownerMiddleware } from "../middlewares/owner.middleware.js";
 export const articleTagRouter = Router();
-
-//rutas
-// userRouter.get("/users", getAllUsers);
-
-articleTagRouter.post(
-  "/articles-tags",
-  createArticleTagValidations,
-  validate,
-  createArticleTag,
-);
-
-// userRouter.get("/users/:id", getUserById);
-// userRouter.put("/users/:id", updateUser);
-
-articleTagRouter.delete(
-  "/articles-tags/:articleTagId",
-  deleteArticleTagValidations,
-  validate,
-  deleteArticleTag,
-);
+articleTagRouter.post("/articles-tags", authMiddleware, createArticleTagValidations, validate, ownerMiddleware({ source: "body", allowAdmin: false }), createArticleTag);
+articleTagRouter.delete("/articles-tags/:articleTagId", authMiddleware, deleteArticleTagValidations, validate, ownerMiddleware({ source: "articleTag", allowAdmin: false }), deleteArticleTag);

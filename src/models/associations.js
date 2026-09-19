@@ -44,6 +44,9 @@ ArticleModel.belongsToMany(TagModel, {
   //tabla puente
   // Esa relación no está directamente en Article, sino que pasa a través de ArticleTagModel
   through: ArticleTagModel,
+  // El CASCADE automático solo ocurre ante DELETE físico en MySQL.
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
   //Cuando estoy parado en Article, la columna de la tabla puente que me representa es article_id
   foreignKey: "article_id",
   // La columna que representa al otro lado es tag_id
@@ -56,6 +59,9 @@ ArticleModel.belongsToMany(TagModel, {
 
 TagModel.belongsToMany(ArticleModel, {
   through: ArticleTagModel,
+  // El CASCADE automático solo ocurre ante DELETE físico en MySQL.
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
   foreignKey: "tag_id",
   otherKey: "article_id",
   as: "articles"
