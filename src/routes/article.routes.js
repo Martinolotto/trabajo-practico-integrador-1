@@ -6,12 +6,14 @@ import {
   createArticle,
   getArticleById,
   //   updateUser,
-  //   deleteUser,
+  deleteArticle
+  
 } from "../controllers/article.controller.js";
 
 import {
   createArticleValidations,
   getArticleByIdValidations,
+  deleteArticleValidations
 } from "../middlewares/article.validation.js";
 
 import { validate } from "../middlewares/validate.js";
@@ -37,4 +39,11 @@ articleRouter.get(
 );
 
 // userRouter.put("/users/:id", updateUser);
-// userRouter.delete("/users/:id", deleteUser);
+
+//eliminar artículo por id
+articleRouter.delete(
+  "/articles/:id",
+  deleteArticleValidations,
+  validate,
+  deleteArticle
+);

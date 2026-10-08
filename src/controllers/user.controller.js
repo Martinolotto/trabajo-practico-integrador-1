@@ -185,6 +185,8 @@ export const deleteUser = async (req, res) => {
     }
 
     //borramos todo el registro que ya identificamos
+    //eliminación lógica gracias a paranoid en UserModel
+    //se marca deleted_at y las consultas normales lo ignoran
     await user.destroy();
 
     return res.status(200).json({
