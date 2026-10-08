@@ -1,71 +1,41 @@
-//modelo donde hacemos las consultas
-import { ArticleTagModel } from "../models/article.tag.model.js";
-//importamos matchedData para trabajar solamente con los datos enviados y validados
+/*
+ GUIA EXAMEN - CONTROLADOR DEL PUENTE MUCHOS A MUCHOS
+ ArticleTag tiene dos FK: article_id -> Article; tag_id -> Tag.
+ Create = agregar asociación (NO crear artículo ni tag).
+ Delete = retirar asociación (NO eliminar artículo ni tag).
+ ownerMiddleware comprobó ANTES que el usuario es autor del artículo.
+*/
 import { matchedData } from "express-validator";
+import { ArticleTagModel } from "../models/article.tag.model.js";
 
-//crear la relacion entre articulo y tag
 export const createArticleTag = async (req, res) => {
   try {
-    //obtener los datos del body
-    //obtener solamente los datos validados que vienen del body
-    const { article_id, tag_id } = matchedData(req, {
-      locations: ["body"],
-    });
-
-    //crear un articletag
-    const articleTag = await ArticleTagModel.create({
-      article_id,
-      tag_id,
-    });
-
-    //response ok
-    return res.status(201).json({
-      message: "Etiqueta agregada al aritculo correctamente",
-      articleTag: {
-        id: articleTag.id,
-        article_id: articleTag.article_id,
-        tag_id: articleTag.tag_id,
-      },
-    });
+    const { article_id, tag_id } = matchedData(req, { locations: ["body"] });
+    //Evitar repetir la misma relación (también conviene tener UNIQUE en MySQL).
+    const existing = await ArticleTagModel.findOne({ where: { article_id, tag_id } });
+    if (existing) return res.status(400).json({ message: "La etiqueta ya está vinculada" });
+    //Crear una fila en ArticleTags: solo 2 IDs; NO se crean nuevas entidades.
+    const articleTag = await ArticleTagModel.create({ article_id, tag_id });
+    return res.status(201).json({ message: "Etiqueta agregada al artículo", articleTag });
   } catch (error) {
-    console.log(error);
-
-    return res.status(500).json({
-      message: "Error interno del servidor",
-    });
+    console.error(error);
+    if (error.name === "SequelizeUniqueConstraintError") {
+      return res.status(400).json({ message: "La etiqueta ya está vinculada" });
+    }
+    return res.status(500).json({ message: "Error al asociar etiqueta" });
   }
 };
 
-//borrar relacion entre articulo y tag, solo la fila intermedia
 export const deleteArticleTag = async (req, res) => {
   try {
-    //obtener el id de la peticion
-    //obtener solamente el parametro que fue validado
-    const { articleTagId } = matchedData(req, {
-      locations: ["params"],
-    });
-
-    //buscamos la relacion por id
-    const articleTag = await ArticleTagModel.findByPk(articleTagId);
-
-    //si no hay una relacion con ese id
-    if (!articleTag) {
-      return res.status(404).json({
-        message: "Relación no encontrada",
-      });
-    }
-
-    //borramos todo el registro que ya identificamos
-    await articleTag.destroy();
-
-    return res.status(200).json({
-      message: "etiqueta retirada del artículo correctamente",
-    });
+    const { articleTagId } = matchedData(req, { locations: ["params"] });
+    const link = await ArticleTagModel.findByPk(articleTagId);
+    if (!link) return res.status(404).json({ message: "Relación no encontrada" });
+    //Eliminación FÍSICA de la fila puente, los datos padres permanecen.
+    await link.destroy();
+    return res.status(200).json({ message: "Etiqueta retirada del artículo" });
   } catch (error) {
-    console.log(error);
-
-    return res.status(500).json({
-      message: "Error interno del Servidor",
-    });
+    console.error(error);
+    return res.status(500).json({ message: "Error al quitar etiqueta" });
   }
 };

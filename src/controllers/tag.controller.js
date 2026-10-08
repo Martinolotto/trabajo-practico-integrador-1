@@ -1,11 +1,12 @@
+/* GUIA EXAMEN: Tags GET lista para autenticados; POST/GET:id/PUT/DELETE solo admin.
+   DELETE físico limpia ArticleTag en la MISMA transacción, sin borrar Article. */
 //modelo donde hacemos las consultas
 import { ArticleModel } from "../models/article.model.js";
 import { TagModel } from "../models/tag.model.js";
-//importamos matchedData para trabajar solamente con los datos enviados y validados
-import { matchedData } from "express-validator";
-//eliminacion cascada
 import { ArticleTagModel } from "../models/article.tag.model.js";
 import { sequelize } from "../config/database.js";
+//importamos matchedData para trabajar solamente con los datos enviados y validados
+import { matchedData } from "express-validator";
 
 //crear tag Y desde Article quiero llamar a los relacionados tags
 export const createTag = async (req, res) => {
@@ -145,16 +146,11 @@ export const deleteTag = async (req, res) => {
     }
 
     //eliminar el tag encontrado
-    //eliminar la etiqueta y sus asociaciones
+    //Transacción atómica: eliminar los vínculos del puente y luego Tag.
+    //No se eliminan los artículos que utilizaban esta etiqueta.
     await sequelize.transaction(async (transaction) => {
-      //borrar relaciones de la tabla intermedia
-      await ArticleTagModel.destroy({
-        where: { tag_id: tag.id },
-        transaction,
-      });
-
-      //borrar físicamente el tag
-      await tag.destroy({ transaction });
+      await ArticleTagModel.destroy({ where: { tag_id: tag.id }, transaction });
+      await tag.destroy({ transaction }); // Borrado físico: Tag no tiene paranoid.
     });
 
     return res.status(200).json({

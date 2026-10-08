@@ -46,8 +46,8 @@ export const ArticleModel = sequelize.define(
         timestamps: true,
         createdAt: "created_at",
         updatedAt: "updated_at",
-        //eliminación lógica de artículos
-        //destroy marca la fecha, no elimina físicamente la fila
+        // Artículo eliminado: conservar fila para auditoría/historial.
+        // Si deleted_at tiene fecha, consultas normales lo excluyen.
         paranoid: true,
         deletedAt: "deleted_at"
 }  

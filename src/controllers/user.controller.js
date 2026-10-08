@@ -1,3 +1,19 @@
+/*
+ * GUIA DEL EXAMEN — CRUD ADMINISTRATIVO DE USERS
+ * RUTA: /api/users (la ruta la define user.routes.js).
+ * UNA VEZ PROTEGIDO: authMiddleware -> adminMiddleware -> validaciones
+ * -> validate -> controlador de esta pagina -> Sequelize -> MySQL.
+ *
+ * GET ALL: findAll + include Profile; no mostrar password.
+ * GET BY ID: req.params.id -> findByPk + include Profile y Articles.
+ * POST: matchedData -> bcrypt.hash(password) -> UserModel.create -> 201.
+ * PUT: matchedData({locations:["body"]}) evita mezclar ID de la URL;
+ *      si cambia password, primero hashearla; buscar, actualizar y 200.
+ * DELETE: findByPk -> destroy(); si User tiene paranoid:true,
+ *         DELETE LOGICO: setea deleted_at, no borra la fila fisicamente.
+ * OJO: que el cliente conozca un ID NO lo habilita a modificar ese usuario.
+ */
+
 //¿Qué debe hacerse cuando esa petición llegó?
 
 //importamos el modelo para que sequelize lo registre
@@ -7,6 +23,12 @@ import { UserModel } from "../models/user.model.js";
 import { ArticleModel } from "../models/article.model.js";
 //importamos matchedata de expvalidator para trabajar con los datos que nosotros pedimos y validamos
 import { matchedData } from "express-validator";
+//import de nuestro helper para el hash de contraseñas 
+import { hashPassword } from "../helpers/bcrypt.helper.js";
+
+
+
+
 
 // controlador para obtener todos los usuarios
 export const getAllUsers = async (req, res) => {
@@ -39,11 +61,18 @@ export const createUser = async (req, res) => {
     const { username, email, password, role } = matchedData(req);
     //const datosValidados = matchedData(req)
 
+    //antes de crear el registro
+    //Nunca guardar una contraseña directamente en MySQL.
+    //Primero obtenemos su hash usando bcrypt.
+    // bcrypt consume la password ingresada y devuelve un hash irreversible.
+    const passwordHash = await hashPassword(password);
+
     //crear un usuario en MySQL
     const user = await UserModel.create({
       username,
       email,
-      password,
+      // solo la contraseña hasheada se guarda en el atributo 
+      password: passwordHash,
       role,
     });
     //const user = await UserModel.create(datosValidados)
@@ -123,8 +152,8 @@ export const getUserById = async (req, res) => {
 //actualizar un usuario
 export const updateUser = async (req, res) => {
   try {
-    //obtener el id de la peticion
-    const userId = req.params.id;
+    //obtener el id de la peticion validado
+    const { id: userId } = matchedData(req, { locations: ["params"] });
 
     //obtener los nuevos datos del body
     //desestructuramos para crear las variables de esas propiedades
@@ -132,9 +161,14 @@ export const updateUser = async (req, res) => {
     //obtener solamente los datos validados que vienen del body
     //no incluimos el param id porque solo lo usamos para identificar que usuario actualizar
     const userData = matchedData(req, { locations: ["body"] });
-
     //guardamos las propiedades con la nueva informacion por actualizar para pasarsela a sequelize
 
+    //Si estamos actualizando la contraseña, también debemos hashearla.
+    if (userData.password !== undefined) {
+      // PUT de password tambien DEBE hashear, si no se guarda texto plano.
+      userData.password = await hashPassword(userData.password);
+    }
+    
     //buscamos el usuario por id
     const user = await UserModel.findByPk(userId);
 

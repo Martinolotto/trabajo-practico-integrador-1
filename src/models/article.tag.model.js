@@ -21,8 +21,7 @@ export const ArticleTagModel = sequelize.define(
                 model: ArticleModel,
                 key: "id"
             },
-            //si se borra físicamente el artículo,
-            //también se borran sus relaciones con etiquetas
+            // Borrado FÍSICO de Article: FK del puente puede aplicar CASCADE.
             onDelete: "CASCADE",
             onUpdate: "CASCADE"
         },
@@ -35,8 +34,7 @@ export const ArticleTagModel = sequelize.define(
                 model: TagModel,
                 key: "id"
             },
-             //si se borra físicamente la etiqueta,
-            //también se borran sus relaciones con artículos
+            // Borrado FÍSICO de Tag: borrar vínculos, no artículos.
             onDelete: "CASCADE",
             onUpdate: "CASCADE"
         },
